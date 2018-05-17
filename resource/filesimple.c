@@ -20,8 +20,6 @@ char *readJSONFile() {
         
         fread(string,1,size,fp); 
 
-	printf("%s",string);
-        
         fclose(fp);
         return string;
 }
@@ -42,7 +40,7 @@ int main() {
 	jsmn_parser p;
 	jsmntok_t t[128]; /* We expect no more than 128 tokens */
 
-  JSON_STRING=readJSONFile();
+  	JSON_STRING=readJSONFile();
   
 	jsmn_init(&p);
 	r = jsmn_parse(&p, JSON_STRING, strlen(JSON_STRING), t, sizeof(t)/sizeof(t[0]));
