@@ -40,6 +40,7 @@ clean:
 	rm -f simple_example
 	rm -f jsondump
 	rm -f myexample
+	rm -f mysample
 
 .PHONY: all clean test
 
