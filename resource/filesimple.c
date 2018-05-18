@@ -11,20 +11,28 @@ char *readJSONFile() {
 
         fseek(fp,0l,SEEK_END);
         size=ftell(fp)+1;
-
-        fclose(fp);
-
-        fp=fopen("data.json","rt");
-  
+	rewind(fp);
         string=(char*)malloc(sizeof(char)*size);
-        
         fread(string,1,size,fp); 
-
         fclose(fp);
+
         return string;
 }
 
 static const char* JSON_STRING;
+
+void jsonNameList(char*jsonstr,jsmntok_t*t,int tokcount){
+	int i;
+	int count;
+
+  	for(i = 1,count=1;i<tokcount;i++){
+      		if(t[i].type == JSMN_ARRAY || t[i].type == JSMN_OBJECT)  continue;
+      		else if (t[i].size > 0){
+        		printf("name[%2d] : %.*s\n",count,t[i].end-t[i].start,jsonstr + t[i].start);
+        		count++;
+      		}	
+  	}
+}
 
 static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
 	if (tok->type == JSMN_STRING && (int) strlen(s) == tok->end - tok->start &&
@@ -60,35 +68,7 @@ int main() {
 		return 1;
 	}
 
-	/* Loop over all keys of the root object */
-	for (i = 1; i < r; i++) {
-		if (jsoneq(JSON_STRING, &t[i], "name") == 0) {
-			/* We may use strndup() to fetch string value */
-			printf("- name: %.*s\n", t[i+1].end-t[i+1].start,
-					JSON_STRING + t[i+1].start);
-			i++;
-		} else if (jsoneq(JSON_STRING, &t[i], "keywords") == 0) {
-			/* We may additionally check if the value is either "true" or "false" */
-			printf("- keywords: %.*s\n",t[i+1].end-t[i+1].start,
-					JSON_STRING + t[i+1].start);
-			i++;
-		} else if (jsoneq(JSON_STRING, &t[i], "description") == 0) {
-			/* We may want to do strtol() here to get numeric value */
-			printf("- UID: %.*s\n",t[i+1].end-t[i+1].start,
-					JSON_STRING + t[i+1].start);
-			i++;
-		} else if (jsoneq(JSON_STRING, &t[i], "examples") == 0) {
-			int j;
-			printf("- examples:\n");
-			if (t[i+1].type != JSMN_ARRAY) {
-				continue; /* We expect groups to be an array of strings */
-			}
-			for (j = 0; j < t[i+1].size; j++) {
-				jsmntok_t *g = &t[i+j+2];
-				printf("  * %.*s\n",g->end - g->start, JSON_STRING + g->start);
-			}
-			i += t[i+1].size + 1;
-		} 
-	}
+	jsonNameList(JSON_STRING,t,r);	
+
 	return EXIT_SUCCESS;
 }
