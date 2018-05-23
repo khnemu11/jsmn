@@ -39,6 +39,8 @@ int count;
 void printNameList(char*jsonstr,jsmntok_t *t, int *nameTokIndex){
  int i=0;
 
+ printf("***** Name List *******\n");
+
  while(1){
    if(nameTokIndex[i]==0) break;
    else{
@@ -46,6 +48,28 @@ void printNameList(char*jsonstr,jsmntok_t *t, int *nameTokIndex){
       i++;
    }
  } 
+}
+
+void selectNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
+  int index;
+  int j;
+
+  while(1){
+    printf("Select Name's no (exit:0) >> ");
+    scanf("%d",&index);
+
+    if(index==0){
+      printf("exit\n");
+      break;
+    }
+    else if(nameTokIndex[index-1]!=0){
+      printf("name[%2d] : %.*s\n",index,t[nameTokIndex[index-1]].end-t[nameTokIndex[index-1]].start,jsonstr + t[nameTokIndex[index-1]].start);
+      printf("%.*s\n",t[nameTokIndex[index-1]+1].end-t[nameTokIndex[index-1]+1].start,jsonstr + t[nameTokIndex[index-1]+1].start);
+    }
+    else{
+      printf("input right index\n");
+    }
+  }
 }
 
 static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
@@ -85,6 +109,7 @@ int main() {
 
 	jsonNameList(JSON_STRING,t,r,nameTokIndex);	
 	printNameList(JSON_STRING,t,nameTokIndex);
-
+	selectNameList(JSON_STRING,t, nameTokIndex);
+	
 	return EXIT_SUCCESS;
 }
