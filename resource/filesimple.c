@@ -21,17 +21,31 @@ char *readJSONFile() {
 
 static const char* JSON_STRING;
 
-void jsonNameList(char*jsonstr,jsmntok_t*t,int tokcount){
-	int i;
-	int count;
+void jsonNameList(char*jsonstr,jsmntok_t*t,int tokcount,int *nameTokIndex){
+int i;
+int j;
+int count;
 
-  	for(i = 1,count=1;i<tokcount;i++){
-      		if(t[i].type == JSMN_ARRAY || t[i].type == JSMN_OBJECT)  continue;
-      		else if (t[i].size > 0){
-        		printf("name[%2d] : %.*s\n",count,t[i].end-t[i].start,jsonstr + t[i].start);
-        		count++;
-      		}	
-  	}
+  for(i = 1,j=0,count=1;i<tokcount;i++){
+    if(t[i].type == JSMN_ARRAY || t[i].type == JSMN_OBJECT)  continue;
+    else if (t[i].size > 0){
+      nameTokIndex[j]=i;
+      count++;
+        j++;
+    }
+  }
+}
+
+void printNameList(char*jsonstr,jsmntok_t *t, int *nameTokIndex){
+ int i=0;
+
+ while(1){
+   if(nameTokIndex[i]==0) break;
+   else{
+      printf("name[%2d] : %.*s\n",i+1,t[nameTokIndex[i]].end-t[nameTokIndex[i]].start,jsonstr + t[nameTokIndex[i]].start);
+      i++;
+   }
+ } 
 }
 
 static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
@@ -45,6 +59,7 @@ static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
 int main() {
 	int i;
 	int r;
+	int nameTokIndex[100]={0,};
 	jsmn_parser p;
 	jsmntok_t t[128]; /* We expect no more than 128 tokens */
 
@@ -68,7 +83,8 @@ int main() {
 		return 1;
 	}
 
-	jsonNameList(JSON_STRING,t,r);	
+	jsonNameList(JSON_STRING,t,r,nameTokIndex);	
+	printNameList(JSON_STRING,t,nameTokIndex);
 
 	return EXIT_SUCCESS;
 }
