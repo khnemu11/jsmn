@@ -55,7 +55,7 @@ void selectNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
   int j;
 
   while(1){
-    printf("Select Name's no (exit:0) >> ");
+    printf("\nSelect Name's no (exit:0) >> ");
     scanf("%d",&index);
 
     if(index==0){
