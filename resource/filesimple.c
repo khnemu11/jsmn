@@ -101,9 +101,9 @@ int main() {
 		return 1;
 	}
 
-	/* Assume the top-level element is an object */
-	if (r < 1 || t[0].type != JSMN_OBJECT) {
-		printf("Object expected\n");
+	/* Assume the top-level element is an array */
+	if (r < 1 || t[0].type != JSMN_ARRAY) {
+		printf("Array expected\n");
 		return 1;
 	}
 
