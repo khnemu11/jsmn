@@ -25,7 +25,6 @@ void jsonNameList(char*jsonstr,jsmntok_t*t,int tokcount,int *nameTokIndex){
 int i;
 int j;
 int count;
-int ba;
 
   for(i = 1,j=0,count=1;i<tokcount;i++){
     if(t[i].type == JSMN_ARRAY || t[i].type == JSMN_OBJECT)  continue;
