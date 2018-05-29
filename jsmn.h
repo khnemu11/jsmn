@@ -1,3 +1,5 @@
+#define JSMN_PARENT_LINKS
+
 #ifndef __JSMN_H_
 #define __JSMN_H_
 

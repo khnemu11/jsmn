@@ -1,3 +1,5 @@
+//#define JSMN_PARENT_LINKS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,7 +9,7 @@ char *readJSONFile() {
         int size;
         char*string;
       
-        FILE*fp=fopen("data.json","rt");
+        FILE*fp=fopen("data2.json","rt");
 
         fseek(fp,0l,SEEK_END);
         size=ftell(fp)+1;
@@ -26,8 +28,10 @@ int i;
 int j;
 int count;
 
-  for(i = 1,j=0,count=1;i<tokcount;i++){
-    if(t[i].type == JSMN_ARRAY || t[i].type == JSMN_OBJECT)  continue;
+  for(i = 0,j=0,count=1;i<tokcount;i++){
+    printf("size[%d] : %d\n ",i,t[i].size);
+    printf("parent[%d]: %d\n",i,t[i].parent);
+	if(t[i].type == JSMN_ARRAY || t[i].type == JSMN_OBJECT)  continue;
     else if (t[i].size > 0){
       nameTokIndex[j]=i;
       count++;
@@ -36,22 +40,24 @@ int count;
   }
 }
 
-int* printObjectNameList(char*jsonstr,jsmntok_t *t,int tokcount,int* objectNameIndex){
+int* printObjectNameList(char*jsonstr,jsmntok_t *t,int tokcount,int* objectNameIndex,int*indexcount){
   int i;
   int j;
 
   printf("*******Object List******\n");
 
   for(i = 1,j =0; i < tokcount; i++){
-      if(t[i].size == 8){
-        printf("name[%2d] : %.*s\n",j+1,t[i+2].end-t[i+2].start,jsonstr + t[i+2].start);
+      if(t[i].parent == 0){
+        printf("name[%2d] : %.*s\n",j+1,t[i].end-t[i].start,jsonstr + t[i].start);
         if(j==0){
           objectNameIndex=(int*)malloc(sizeof(int));
           objectNameIndex[j]=i;
+      	(*indexcount)++;
         }
         else{
           objectNameIndex=(int*)realloc(objectNameIndex,sizeof(objectNameIndex)+sizeof(int));
           objectNameIndex[j]=i;
+	(*indexcount)++;
         }
         j++;
       }
@@ -95,7 +101,7 @@ void selectNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
   }
 }
 
-void selectObjectNameList(char *jsonstr, jsmntok_t *t, int *objectNameIndex){
+void selectObjectNameList(char *jsonstr, jsmntok_t *t, int *objectNameIndex,int *indexcount){
   int index;
   int j;
 
@@ -108,9 +114,9 @@ void selectObjectNameList(char *jsonstr, jsmntok_t *t, int *objectNameIndex){
       break;
     }
 
-    else if(index-1<=sizeof(objectNameIndex)/sizeof(int)){
-      printf("name[%2d] : %.*s\n",index,t[objectNameIndex[index-1]+2].end-t[objectNameIndex[index-1]+2].start,jsonstr + t[objectNameIndex[index-1]+2].start);
-      printf("%.*s\n",t[objectNameIndex[index-1]].end-t[objectNameIndex[index-1]].start,jsonstr + t[objectNameIndex[index-1]].start);
+    else if(index-1<=*indexcount){
+      printf("name[%2d] : %.*s\n",index,t[objectNameIndex[index-1]].end-t[objectNameIndex[index-1]].start,jsonstr + t[objectNameIndex[index-1]].start);
+      printf("%.*s\n",t[objectNameIndex[index-1]+1].end-t[objectNameIndex[index-1]+1].start,jsonstr + t[objectNameIndex[index-1]+1].start);
     }
     else{
       printf("input right index\n");
@@ -134,7 +140,8 @@ int main() {
 	jsmn_parser p;
 	jsmntok_t t[128]; /* We expect no more than 128 tokens */
 	int *objectNameIndex;	
-
+	int indexcount;
+	
   	JSON_STRING=readJSONFile();
   
 	jsmn_init(&p);
@@ -150,16 +157,16 @@ int main() {
 	}
 
 	/* Assume the top-level element is an array */
-	if (r < 1 || t[0].type != JSMN_ARRAY) {
+	if (r < 1 || t[0].type != JSMN_OBJECT) {
 		printf("Array expected\n");
 		return 1;
 	}
 
-	jsonNameList(JSON_STRING,t,r,nameTokIndex);	
-	objectNameIndex=printObjectNameList(JSON_STRING,t,r,objectNameIndex);
+	//jsonNameList(JSON_STRING,t,r,nameTokIndex);	
+	objectNameIndex=printObjectNameList(JSON_STRING,t,r,objectNameIndex,&indexcount);
 	//printNameList(JSON_STRING,t,nameTokIndex);
 	//selectNameList(JSON_STRING,t, nameTokIndex);
-	selectObjectNameList(JSON_STRING,t,objectNameIndex);	
+	selectObjectNameList(JSON_STRING,t,objectNameIndex,&indexcount);	
 
 	return EXIT_SUCCESS;
 }
