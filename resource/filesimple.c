@@ -89,7 +89,7 @@ char *readJSONFile() {
 	int size;
 	char *string;
 
-	FILE *fp = fopen("data.json", "rt");
+	FILE *fp = fopen("data3.json", "rt");
 	fseek(fp, 0l, SEEK_END);
 	size = ftell(fp) + 1;
 	rewind(fp);
