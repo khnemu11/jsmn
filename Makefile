@@ -28,7 +28,7 @@ jsmn_test.o: jsmn_test.c libjsmn.a
 simple_example: example/simple.o libjsmn.a
 	$(CC) $(LDFLAGS) $^ -o $@
 
-myexample: resource/filesimple.o libjsmn.a
+myexample: resource/productlist.o libjsmn.a
 	$(CC) $(LDFLAGS) $^ -o $@
 
 jsondump: example/jsondump.o libjsmn.a
