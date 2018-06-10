@@ -1,0 +1,29 @@
+{
+"Snack":
+  [
+    {
+      "company":"노브랜드",
+      "name":"코코넛쿠키",
+      "price":2980,
+      "count":444
+    },
+    {
+      "company":"오리온",
+      "name":"포카칩",
+      "price":1180,
+      "count":16016
+    },
+    {
+      "company":"농심",
+      "name":"수미칩",
+      "price":1200,
+      "count":10922
+    },
+    {
+      "company":"해태",
+      "name":"허니버터칩",
+      "price":6080,
+      "count":49
+    }
+  ]
+}
